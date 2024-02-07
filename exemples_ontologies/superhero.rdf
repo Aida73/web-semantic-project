@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+	xmlns:geo-ont="http://www.geonames.org/ontology#"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:owl="http://www.w3.org/2002/07/owl#"
+	xmlns:geo-pos="http://www.w3.org/2003/01/geo/wgs84_pos#"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+
+<rdf:Description rdf:about="http://wallscope.co.uk/resource/race/Gorilla">
+	<rdfs:label xml:lang="en">Gorilla</rdfs:label>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://wallscope.co.uk/resource/superhero/A-Bomb/Marvel+Comics">
+	<eyeColor xmlns="http://dbpedia.org/ontology/" xml:lang="en">yellow</eyeColor>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://wallscope.co.uk/resource/superhero/A-Bomb/Marvel+Comics">
+	<species xmlns="http://dbpedia.org/property/" rdf:resource="http://wallscope.co.uk/resource/race/Human"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://wallscope.co.uk/resource/superhero/Dash/Dark+Horse+Comics">
+	<hairColor xmlns="http://dbpedia.org/ontology/" xml:lang="en">Blond</hairColor>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://wallscope.co.uk/resource/superhero/A-Bomb/Marvel+Comics">
+	<height xmlns="http://dbpedia.org/ontology/" rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">203.0</height>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://wallscope.co.uk/resource/superhero/A-Bomb/Marvel+Comics">
+	<publisher xmlns="http://dbpedia.org/property/" rdf:resource="http://wallscope.co.uk/resource/publisher/Marvel+Comics"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://wallscope.co.uk/resource/superhero/A-Bomb/Marvel+Comics">
+	<skinColor xmlns="http://dbpedia.org/property/" rdf:resource="http://wallscope.co.uk/resource/skin/unknown"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://wallscope.co.uk/resource/superhero/A-Bomb/Marvel+Comics">
+	<hero xmlns="http://dbpedia.org/property/" xml:lang="en">good</hero>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://wallscope.co.uk/resource/superhero/A-Bomb/Marvel+Comics">
+	<weight xmlns="http://dbpedia.org/ontology/" rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">441.0</weight>
+</rdf:Description>
+
+
+</rdf:RDF>
