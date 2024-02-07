@@ -1,0 +1,11 @@
+To do for the project
+
+- Trouver un graph(ou ontologie)
+- Extraire de ce graphe un sous-graphe qui constituera notre graphe 
+d'input
+- Trouver les triplets de ce graphe 
+- Générer la requete avec notre fonction
+
+- faire du retro-engineering: on va ecrire une requete et obtenir un subgrap et on va essayer de reconstruire cette requête
+
+https://docs.stardog.com/tutorials/rdf-graph-data-model
