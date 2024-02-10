@@ -1,0 +1,73 @@
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:ex="http://example.org/">
+
+  <!-- Étudiants -->
+  <ex:Student rdf:about="http://example.org/student1">
+    <ex:name>Aida</ex:name>
+  </ex:Student>
+  <ex:Student rdf:about="http://example.org/student2">
+    <ex:name>Aissatou</ex:name>
+  </ex:Student>
+  <ex:Student rdf:about="http://example.org/student3">
+    <ex:name>Wang</ex:name>
+  </ex:Student>
+  <ex:Student rdf:about="http://example.org/student4">
+    <ex:name>Amet</ex:name>
+  </ex:Student>
+  <ex:Student rdf:about="http://example.org/student4">
+    <ex:name>Zoubida</ex:name>
+  </ex:Student>
+  <ex:Student rdf:about="http://example.org/student5">
+    <ex:name>Ami</ex:name>
+  </ex:Student>
+  <ex:Student rdf:about="http://example.org/student6">
+    <ex:name>Malick</ex:name>
+  </ex:Student>
+
+  <!-- Universités -->
+  <ex:University rdf:about="http://example.org/university1">
+    <ex:name>UVSQ</ex:name>
+  </ex:University>
+  <ex:University rdf:about="http://example.org/university2">
+    <ex:name>IPSL</ex:name>
+  </ex:University>
+  <ex:University rdf:about="http://example.org/university3">
+    <ex:name>Sorbone</ex:name>
+  </ex:University>
+
+  <!-- Villes -->
+  <ex:City rdf:about="http://example.org/city1">
+    <ex:name>CityA</ex:name>
+  </ex:City>
+  <ex:City rdf:about="http://example.org/city2">
+    <ex:name>IDF</ex:name>
+  </ex:City>
+
+  <!-- Liens -->
+  <ex:Student rdf:about="http://example.org/student1">
+    <ex:studiesAt rdf:resource="http://example.org/university1" />
+  </ex:Student>
+  <ex:Student rdf:about="http://example.org/student2">
+    <ex:studiesAt rdf:resource="http://example.org/university2" />
+  </ex:Student>
+  <ex:Student rdf:about="http://example.org/student3">
+    <ex:studiesAt rdf:resource="http://example.org/university2" />
+  </ex:Student>
+  <ex:Student rdf:about="http://example.org/student4">
+    <ex:studiesAt rdf:resource="http://example.org/university3" />
+  </ex:Student>
+  <ex:Student rdf:about="http://example.org/student5">
+    <ex:studiesAt rdf:resource="http://example.org/university2" />
+  </ex:Student>
+  <ex:Student rdf:about="http://example.org/student6">
+    <ex:studiesAt rdf:resource="http://example.org/university1" />
+  </ex:Student>
+  <ex:University rdf:about="http://example.org/university1">
+    <ex:locatedIn rdf:resource="http://example.org/city1" />
+  </ex:University>
+  <ex:University rdf:about="http://example.org/university2">
+    <ex:locatedIn rdf:resource="http://example.org/city2" />
+  </ex:University>
+  <ex:University rdf:about="http://example.org/university3">
+    <ex:locatedIn rdf:resource="http://example.org/city2" />
+  </ex:University>
+</rdf:RDF>
