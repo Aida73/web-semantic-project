@@ -21,7 +21,7 @@ def get_graph_input():
             ex:locatedIn ?city .
 
         ?city rdf:type ex:City ;
-                ex:name "IDF" ;
+                ex:name "Nantes" ;
                 ex:name ?cityName .
         }
 
@@ -84,38 +84,124 @@ def get_triplets(G: Graph):
 
 
 def get_literals(triplets):
+    """
+        Extraire les valeurs littérales des objets dans une liste de triplets RDF.
+        Pour chaque triplet, elle vérifie si l'objet est une instance de la classe Literal,
+        ce qui signifie qu'il s'agit d'une valeur littérale.
+        Si l'objet est une valeur littérale, elle extrait sa valeur à l'aide de l'attribut value
+        et l'ajoute à la liste literals.
+        Enfin, elle retourne la liste contenant toutes les valeurs littérales des objets trouvées
+        dans les triplets.
+        Input: liste de triplets RDF au format (sujet, prédicat, objet)
+        Output: liste contenant les valeurs littérales des objets dans les triplets
+        La fonction parcourt chaque triplet dans la liste triplets.
+        Fonctionnement: 
+    """
     literals=[]
-    for subj, pred, obj in triplets:
+    for _, _, obj in triplets:
         if isinstance(obj, Literal):
             literals.append(obj.value)
     return literals
 
-# Générer la requête
-def generate_query(source_literals):
-    # Définir les préfixes
+
+def get_propriete_values(triplets,propriete):
+    """
+        Obj:    Trouver la valeur des propriétés pour peupler la close FILTER 
+        Input:  Une liste de triplets RDF au format (sujet, prédicat, objet)
+                La propriété pour laquelle nous voulons extraire les valeurs
+        Output: Une liste des valeurs associées à la propriété spécifiée.
+        Méthode: La fonction parcourt chaque triplet dans la liste triplets.
+                Pour chaque triplet, elle vérifie si le prédicat correspond à la propriété spécifiée 
+                et si l'objet est une valeur littérale égale à propriete.
+                Si ces conditions sont remplies, elle extrait la valeur du sujet du triplet
+                (en supprimant l'URL du sujet)
+                et l'ajoute à un set (values) pour éliminer les doublons
+    """
+    values = set()
+    for triplet in triplets:
+        # Vérifier si le triplet correspond à la propriété donnée
+        if triplet[1] == URIRef('http://example.org/type') and triplet[2] == Literal(propriete):
+            # Ajouter la valeur du sujet à la liste des valeurs de city
+            values.add(triplet[0].toPython().split('/')[-1])
+
+    return list(values)
+
+
+def get_filters(filters):
+    """
+        Pour construire la clause Filter de la requete, s'il y'en a:
+        On récupère toutes les valeurs des objets pour la propriété x dans vos triplets, en procédant comme suit :
+        - Parcourir les triplets.
+        - Filtrer les triplets où la propriété est égale à *ex:type* et où la valeur de l'objet est un littéral égal à 'x'.
+        - Collecter toutes les valeurs des sujets de ces triplets.
+    """
+    if len(filters.items())>0:
+        filter_temp = ""
+        for key, values in filters.items():
+            if len(values) > 0:
+                temp = f"FILTER ("
+                for el in values:
+                    if key == 1:
+                        temp += f"?studentName = {el} || "
+                    elif key == 2:
+                        temp += f"?universityName = {el} || "
+                    elif key == 3:
+                        temp += f"?cityName = {el} || "
+                filter_expr = temp[:-4] + ")\n" 
+                filter_temp += filter_expr
+        return filter_temp
+    return ""
+
+
+def generate_query(graph: Graph):
+
+    triplets = get_triplets(graph)
+    source_literals = get_literals(triplets)
+    """
+        Cette fonction est conçue pour être générique et générer une requête SPARQL adaptée aux informations
+        présentes dans le graphe RDF, en s'assurant d'inclure uniquement les éléments nécessaires à partir 
+        des valeurs littérales détectées.
+
+        Input: un graphe RDF. 
+
+        Elle extrait les triplets du graphe et les valeurs
+        littérales des objets de ces triplets. En fonction des valeurs littérales détectées
+        (par exemple "student", "university", "city"), elle construit dynamiquement une requête SPARQL.
+        Pour chaque type d'entité détecté, elle ajoute les patterns correspondants aux triplets dans la clause WHERE de la requête,
+        ainsi que les variables à extraire dans la clause SELECT.
+        Elle récupère également les valeurs spécifiques des propriétés (noms des étudiants, des universités et des villes).
+        
+        Génération de la requête Sparql
+        Input: graph
+        Output: requête Sparkl 
+        Persp: la fonction devra être plus generique pour les prochaines versions en prenant en compte les autres
+        types de relation pouvant exister entre les sources.
+        On pourrait utiliser un Large Language Model pour détecter toutes les relations existantes dans le graphe reçu en entrée.
+    
+    """
     prefixes = "PREFIX ex: <http://example.org/>\n"
 
-    # Initialiser la partie WHERE de la requête
     where_clause = "WHERE {\n"
+    filter_clause = {}
     
     # Initialiser les variables à extraire
     select_vars = []
     mylist={}
-    # Parcourir les triplets pour construire la requête
+
     for literal in list(set(source_literals)):
-        # Vérifier si le littéral est un nom de ville, etudiant, cite
         if literal == "student":
-            # Ajouter le pattern pour l'étudiant et son université
             triple = "?student ex:name ?studentName ; ex:studiesAt ?university ."
             # Ajouter la variable à extraire
             select_vars.append("?studentName")
             mylist[1]=triple
+            filter_clause[1]=get_propriete_values(triplets,literal)
         if literal == "university":
 
             triple="?university ex:name ?universityName ; ex:locatedIn ?city ."
             # Ajouter la variable à extraire
             select_vars.append("?universityName")
             mylist[2]=triple
+            filter_clause[2]=get_propriete_values(triplets,literal)
         if literal == "city":
             # Ajouter le filtre pour la ville
             where_clause += f"  ?city ex:name ?cityName .\n"
@@ -123,14 +209,19 @@ def generate_query(source_literals):
             select_vars.append("?cityName")
             triple="?city ex:name ?cityName ."
             mylist[3]=triple
-    # Construction de la clause where
+            filter_clause[3]=get_propriete_values(triplets,literal)
+
+    # Construire la clause where
     triplets=list(collections.OrderedDict(sorted(mylist.items())).values())
     for triplet in triplets:
         where_clause += f"\t{triplet}\n"
     where_clause += "}"
+    # Construire la clause FILTER
+    filter_temp = get_filters(filter_clause)
 
     # Construire la requête complète
-    query = prefixes + "SELECT " + " ".join(list(set(select_vars))) + "\n" + where_clause
+    query = prefixes + "SELECT " + " ".join(list(set(select_vars))) + "\n" + where_clause + "\n" + filter_temp
     return query
+
 
 

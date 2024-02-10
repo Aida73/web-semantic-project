@@ -36,7 +36,7 @@
 
   <!-- Villes -->
   <ex:City rdf:about="http://example.org/city1">
-    <ex:name>CityA</ex:name>
+    <ex:name>Nantes</ex:name>
   </ex:City>
   <ex:City rdf:about="http://example.org/city2">
     <ex:name>IDF</ex:name>
