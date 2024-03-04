@@ -3,10 +3,14 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import collections
 
-g=Graph()
-graphe = g.parse("exemples_ontologies/exemple3.rdf")
-
 def get_graph_input():
+    g=Graph()
+    graphe = g.parse("exemples_ontologies/exemple3.rdf")
+    """
+        Fonction pour creer notre graphe d'entree (ceci est dans le cadre du test)
+        On suppose qu'on a à notre disposition notre BD(rdf contenant des données sur 
+        les etudiants, les etudiants et les villes d'etudes)
+    """
     query = """
         PREFIX ex: <http://example.org/>
 
@@ -21,7 +25,7 @@ def get_graph_input():
             ex:locatedIn ?city .
 
         ?city rdf:type ex:City ;
-                ex:name "Nantes" ;
+                ex:name "IDF" ;
                 ex:name ?cityName .
         }
 
@@ -42,10 +46,12 @@ def get_graph_input():
 
 
 def visualization(input):
+    """
+        Cette fonction prend en entrée un graphe 
+        Et permet la visualisation delui-ci.
+    """
     G = input
-    # Définir les positions des nœuds pour le dessin
     pos = nx.spring_layout(G,seed=42)
-
     edge_labels = nx.get_edge_attributes(G, 'relation')
     nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=6)
     nx.draw(G, pos, with_labels=True, node_size=800, node_color='skyblue', font_size=8, font_weight='bold')
@@ -53,6 +59,10 @@ def visualization(input):
 
 
 def get_triplets(G: Graph):
+    """
+        Cette fonction nous permet de récupérer
+        les triplets de notre graphe d'entrée
+    """
     from rdflib import Graph, URIRef, Literal, Namespace, RDF
     rdf_graph = Graph()
     ex = Namespace("http://example.org/")
@@ -85,17 +95,16 @@ def get_triplets(G: Graph):
 
 def get_literals(triplets):
     """
-        Extraire les valeurs littérales des objets dans une liste de triplets RDF.
-        Pour chaque triplet, elle vérifie si l'objet est une instance de la classe Literal,
-        ce qui signifie qu'il s'agit d'une valeur littérale.
-        Si l'objet est une valeur littérale, elle extrait sa valeur à l'aide de l'attribut value
-        et l'ajoute à la liste literals.
-        Enfin, elle retourne la liste contenant toutes les valeurs littérales des objets trouvées
-        dans les triplets.
         Input: liste de triplets RDF au format (sujet, prédicat, objet)
         Output: liste contenant les valeurs littérales des objets dans les triplets
-        La fonction parcourt chaque triplet dans la liste triplets.
-        Fonctionnement: 
+        Methode: Extraire les valeurs littérales des objets dans une liste de triplets RDF.
+            Pour chaque triplet, elle vérifie si l'objet est une instance de la classe Literal,
+            ce qui signifie qu'il s'agit d'une valeur littérale.
+            Si l'objet est une valeur littérale, elle extrait sa valeur à l'aide de l'attribut value
+            et l'ajoute à la liste literals.
+            Enfin, elle retourne la liste contenant toutes les valeurs littérales des objets trouvées
+            dans les triplets.
+            La fonction parcourt chaque triplet dans la liste triplets.
     """
     literals=[]
     for _, _, obj in triplets:
@@ -106,7 +115,7 @@ def get_literals(triplets):
 
 def get_propriete_values(triplets,propriete):
     """
-        Obj:    Trouver la valeur des propriétés pour peupler la close FILTER 
+        Obj:    Trouver la valeur des propriétés pour peupler la clause FILTER 
         Input:  Une liste de triplets RDF au format (sujet, prédicat, objet)
                 La propriété pour laquelle nous voulons extraire les valeurs
         Output: Une liste des valeurs associées à la propriété spécifiée.
@@ -130,9 +139,11 @@ def get_propriete_values(triplets,propriete):
 def get_filters(filters):
     """
         Pour construire la clause Filter de la requete, s'il y'en a:
-        On récupère toutes les valeurs des objets pour la propriété x dans vos triplets, en procédant comme suit :
+        On récupère toutes les valeurs des objets pour la propriété x dans
+        les triplets, en procédant comme suit :
         - Parcourir les triplets.
-        - Filtrer les triplets où la propriété est égale à *ex:type* et où la valeur de l'objet est un littéral égal à 'x'.
+        - Filtrer les triplets où la propriété est égale à *ex:type* et où la valeur de 
+            l'objet est un littéral égal à 'x'.
         - Collecter toutes les valeurs des sujets de ces triplets.
     """
     if len(filters.items())>0:
@@ -153,7 +164,8 @@ def get_filters(filters):
     return ""
 
 
-def generate_query(graph: Graph):
+
+def generate_query(graph: Graph, output_format: str):
 
     triplets = get_triplets(graph)
     source_literals = get_literals(triplets)
@@ -216,12 +228,15 @@ def generate_query(graph: Graph):
     for triplet in triplets:
         where_clause += f"\t{triplet}\n"
     where_clause += "}"
+
     # Construire la clause FILTER
     filter_temp = get_filters(filter_clause)
 
-    # Construire la requête complète
-    query = prefixes + "SELECT " + " ".join(list(set(select_vars))) + "\n" + where_clause + "\n" + filter_temp
+    # Definition du format & Construire la requête complète
+    if output_format=="SELECT":
+        query = prefixes + "SELECT " + " ".join(list(set(select_vars))) + "\n" + where_clause + "\n" + filter_temp
+    elif output_format=="CONSTRUCT":
+        query = prefixes + "CONSTRUCT " + " ".join(list(set(select_vars))) + "\n" + where_clause + "\n" + filter_temp
+
     return query
-
-
 
