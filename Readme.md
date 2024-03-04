@@ -21,10 +21,13 @@ l'objectif est de générer automatiquement une requête Sparql permettant de re
 
 1. Assurez-vous d'avoir installé Python sur votre système.
 
-2. Installez les dépendances requises en exécutant `pip install rdflib` dans votre environnement Python.
+2. Créer un environnement virtual avec `virtualenv myenv`
 
-3. Exécutez le script Python en fournissant le chemin du fichier contenant le graphe RDF en entrée.
+3. Activer l'environnement virtuel avec `source myenv/bin/activate` si vous êtes sur macOs ou `.\myenv\Scripts\activate` sur windows
 
+4. Installez les dépendances requises en exécutant `pip install -r requirements.txt` dans votre environnement Python.
+
+5. Exécutez le notebook `main.ipynb`. Noter que vous pourrez modifier le graphe d'entrée au niveau du fichiers `utils2.py` qui contient toutes les fonctions nécessaires pour créer la requête.
 
 ## Avertissement
 
@@ -32,8 +35,3 @@ Ce script devra être plus generique pour les prochaines versions en prenant en 
 types de relation pouvant exister entre les sources.
 On pourrait utiliser un Large Language Model pour détecter toutes les relations existantes dans le graphe reçu en entrée.
     
-
-## Contribution
-
-Les contributions sous forme de suggestions, de rapports de bogues ou d'améliorations de code sont les bienvenues. N'hésitez pas à ouvrir une demande de fusion pour discuter des modifications proposées.
-
